@@ -1,0 +1,64 @@
+#!/bin/bash
+
+set -eu -o pipefail
+
+# Filename of script.
+NAME="BootUnlock"
+
+# Script identifier (same as package identifier).
+IDENTIFIER="au.com.openwall.$NAME"
+
+# The location to copy the contents of files.
+INSTALL_LOCATION="/Library/PrivilegedHelperTools/$IDENTIFIER"
+
+LAUNCH_DAEMON_PLIST="/Library/LaunchDaemons/$IDENTIFIER.plist"
+
+# Here is the trick: we are abusing the security(1) tool to access items on keychain in a secure way :)
+cp /usr/bin/security "$INSTALL_LOCATION/BootUnlock"
+codesign -f -s - "--prefix=${IDENTIFIER%$NAME}" -r="designated => identifier $IDENTIFIER" "$INSTALL_LOCATION/$NAME"
+chmod 0100 "$INSTALL_LOCATION/$NAME"
+
+trap 'RC=$?; trap - EXIT; rm -f $TMPFILE; exit $RC' HUP INT EXIT TERM
+if ! TMPFILE=$(mktemp -t ${0##*/}); then
+	osascript -e 'display alert "BootUnlock" message "Failed to create a temporary file.  The installation cannot continue!" as critical' >/dev/null
+	exit 1
+fi
+
+cat <<-__EOF__ > "$TMPFILE"
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+        <key>Label</key>
+        <string>$IDENTIFIER</string>
+        <key>LaunchOnlyOnce</key>
+        <true/>
+        <key>KeepAlive</key>
+        <false/>
+        <key>Program</key>
+        <string>$INSTALL_LOCATION/helper.sh</string>
+        <key>RunAtLoad</key>
+        <true/>
+        <key>StandardOutPath</key>
+        <string>/var/log/$NAME.log</string>
+        <key>StandardErrorPath</key>
+        <string>/var/log/$NAME.log</string>
+	</dict>
+	</plist>
+__EOF__
+
+# Pre-create the log file, but if it fails ignore the error
+touch "/var/log/$NAME.log" && \
+chown -h root:wheel "/var/log/$NAME.log" && \
+chmod -h 0644 "/var/log/$NAME.log" \
+	|| :
+
+chown -h root:wheel "$TMPFILE"
+chmod -h 0644 "$TMPFILE"
+mv -f "$TMPFILE" "$LAUNCH_DAEMON_PLIST"
+
+# Load the new LaunchDaemon.
+/bin/launchctl load "$LAUNCH_DAEMON_PLIST"
+
+# Give the user an opportunity to register the passwords for volumes
+"$INSTALL_LOCATION/update.sh"
