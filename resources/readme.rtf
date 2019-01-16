@@ -1,0 +1,41 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1671\cocoasubrtf200
+{\fonttbl\f0\fswiss\fcharset0 Helvetica-Bold;\f1\fswiss\fcharset0 Helvetica;\f2\fnil\fcharset0 Menlo-Regular;
+}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+{\*\expandedcolortbl;;\csgray\c0;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww17240\viewh12860\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\qc\partightenfactor0
+
+\f0\b\fs28 \cf0 BootUnlock\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\qj\partightenfactor0
+
+\f1\b0 \cf0 The idea behind this package was to leverage the standard system tools to overcome the limitation of macOS.  A quick search on the Internet showed that similar tools were created obviously by developers who are eager to write something up from scratch.  However, good engineering requires critical thinking and if the problem can be addressed using the existing tools, then this is the challenge worth puzzling your head with.\
+\
+The package installs most of its content to the 
+\f2 /Library/PrivilegedHelperTools/au.com.openwall.BootUnlock
+\f1  directory (a couple of shell scripts, an XSL file, and a copy of the security tool with custom extended attributes), then it drops a plist file into 
+\f2 \cf2 \CocoaLigature0 /Library/LaunchDaemons
+\f1 / to actually start the 
+\f0\b BootUnlock
+\f1\b0  helper script at the startup.\
+\
+The 
+\f0\b BootUnlock
+\f1\b0  helper script scans the system for any encrypted volumes and for each found one queries the System keychain for the corresponding password entry.  If such an entry is found then 
+\f0\b BootUnlock
+\f1\b0  will use the password and will attempt to unlock the corresponding volume.\
+\
+There are two ways how an end user (you :) ) can add passwords for the encrypted volumes onto the System keychain:\
+\
+1. Hardcore: when you start you system and login as a user whose home directory is not on the encrypted volume (e.g. the administrative user) you will be prompted by the system to unlock volumes and will be given an option to save the provided passwords to the keychain.  Unfortunately, the system will use that user\'92s keychain to store the password, so in order to allow BootUnlock to use the password you will need to move the corresponding entries from user\'92s keychain to the System keychain (using the Keychain app, for example).\
+\
+2. Easy: to make the enrolment of encrypted volumes into 
+\f0\b BootUnlock
+\f1\b0  easier, 
+\f0\b BootUnlock
+\f1\b0  provides a shell script (installed as 
+\f2 \cf0 \CocoaLigature1 /Library/PrivilegedHelperTools/au.com.openwall.BootUnlock/update.sh
+\f1 ) which does all the heavy lifting for you.  This script will be executed at the end of this package installation routine, but you can always call it manually if your configuration changes.\
+\
+Good luck!}

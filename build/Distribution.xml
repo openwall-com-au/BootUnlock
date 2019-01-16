@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<installer-gui-script minSpecVersion="2">
+    <title>BootUnlock</title>
+    <product id="au.com.openwall.BootUnlock" version="1.0" />
+    <background file="background.png" scaling="proportional" alignment="bottomleft"/>
+    <welcome file="welcome.rtf"/>
+    <readme file="readme.rtf"/>
+    <license file="license.rtf"/>
+    <conclusion file="installed.rtf"/>
+    <options customize="never" rootVolumeOnly="true" require-scripts="false" />
+<!--
+    <domains enable_anywhere="false" enable_currentUserHome="false" enable_localSystem="true" />
+ -->
+    <allowed-os-versions>
+        <os-version min="10.6.6" />
+    </allowed-os-versions>
+    <choices-outline>
+        <line choice="au.com.openwall.BootUnlock" />
+    </choices-outline>
+    <choice id="au.com.openwall.BootUnlock" visible="false">
+        <pkg-ref id="au.com.openwall.BootUnlock"/>
+    </choice>
+    <pkg-ref id="au.com.openwall.BootUnlock">BootUnlock-1.0-dist.pkg</pkg-ref>
+</installer-gui-script>
