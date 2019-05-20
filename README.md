@@ -13,4 +13,7 @@ installed) or just run "build/build.sh" (if you do not want to install Xcode).
 The result will be the same: a package is going to be created in the "out"
 directory.
 
+Alternatively, if you do not want to build the package yourself, you can grab the
+premade one from the [releases](../../releases) section here.
+
 To install the package just open it in Finder and follow the installation prompts.
