@@ -5,10 +5,12 @@ set -eu -o pipefail
 PATH=/sbin:/bin:/usr/sbin:/usr/bin
 
 echo "=== $(date) ==="
+for i in {1..60}; do
 diskutil apfs list -plist \
 	| xsltproc --novalid "${0%/*}/diskutil.xsl" - \
 	| grep -E ':true:true$' \
 	| cut -f1-3 -d':' \
+	| tee /dev/stderr \
 	| while IFS=: read NAME UUID DEVICE ; do
 		printf 'Trying to unlock volume "%s" with UUID %s ...\n' "$NAME" "$UUID"
 		if ! PASSPHRASE=$(${0%/*}/BootUnlock find-generic-password \
@@ -28,3 +30,5 @@ diskutil apfs list -plist \
 			continue
 		fi
 	done
+        sleep 1
+done
