@@ -29,6 +29,6 @@ diskutil apfs list -plist \
 			echo "ERROR: could not unlock volume '$NAME', skipping the volume." >&2
 			continue
 		fi
-	done
+	done || true
         sleep 1
 done
