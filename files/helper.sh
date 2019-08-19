@@ -10,7 +10,6 @@ diskutil apfs list -plist \
 	| xsltproc --novalid "${0%/*}/diskutil.xsl" - \
 	| grep -E ':true:true$' \
 	| cut -f1-3 -d':' \
-	| tee /dev/stderr \
 	| while IFS=: read NAME UUID DEVICE ; do
 		printf 'Trying to unlock volume "%s" with UUID %s ...\n' "$NAME" "$UUID"
 		if ! PASSPHRASE=$(${0%/*}/BootUnlock find-generic-password \
