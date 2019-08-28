@@ -33,7 +33,7 @@ cat <<-__EOF__ > "$TMPFILE"
         <key>Label</key>
         <string>$IDENTIFIER</string>
         <key>StartOnMount</key>
-        <false/>
+        <true/>
         <key>Program</key>
         <string>$INSTALL_LOCATION/helper.sh</string>
         <key>RunAtLoad</key>
