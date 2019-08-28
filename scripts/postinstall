@@ -14,8 +14,9 @@ INSTALL_LOCATION="/Library/PrivilegedHelperTools/$IDENTIFIER"
 LAUNCH_DAEMON_PLIST="/Library/LaunchDaemons/$IDENTIFIER.plist"
 
 # Here is the trick: we are abusing the security(1) tool to access items on keychain in a secure way :)
-cp /usr/bin/security "$INSTALL_LOCATION/BootUnlock"
+cp /usr/bin/security "$INSTALL_LOCATION/$NAME"
 codesign -f -s - "--prefix=${IDENTIFIER%$NAME}" -r="designated => identifier $IDENTIFIER" "$INSTALL_LOCATION/$NAME"
+chown -h root:wheel "$INSTALL_LOCATION/$NAME"
 chmod 0100 "$INSTALL_LOCATION/$NAME"
 
 trap 'RC=$?; trap - EXIT; rm -f $TMPFILE; exit $RC' HUP INT EXIT TERM
@@ -31,9 +32,7 @@ cat <<-__EOF__ > "$TMPFILE"
 <dict>
         <key>Label</key>
         <string>$IDENTIFIER</string>
-        <key>LaunchOnlyOnce</key>
-        <true/>
-        <key>KeepAlive</key>
+        <key>StartOnMount</key>
         <false/>
         <key>Program</key>
         <string>$INSTALL_LOCATION/helper.sh</string>
@@ -48,10 +47,10 @@ cat <<-__EOF__ > "$TMPFILE"
 __EOF__
 
 # Pre-create the log file, but if it fails ignore the error
-touch "/var/log/$NAME.log" && \
-chown -h root:wheel "/var/log/$NAME.log" && \
-chmod -h 0644 "/var/log/$NAME.log" \
-	|| :
+touch "/var/log/$NAME.log" \
+	&& chown -h root:wheel "/var/log/$NAME.log" \
+	&& chmod -h 0644 "/var/log/$NAME.log" \
+	||:
 
 chown -h root:wheel "$TMPFILE"
 chmod -h 0644 "$TMPFILE"
