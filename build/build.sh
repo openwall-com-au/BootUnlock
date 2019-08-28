@@ -7,7 +7,7 @@ NAME="BootUnlock"
 IDENTIFIER="au.com.openwall.$NAME"
 
 # Package version number.
-VERSION="1.0"
+VERSION="1.1.0"
 
 # The location to copy the contents of files.
 INSTALL_LOCATION="/Library/PrivilegedHelperTools/$IDENTIFIER"

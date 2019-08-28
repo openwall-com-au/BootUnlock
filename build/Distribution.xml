@@ -20,5 +20,5 @@
     <choice id="au.com.openwall.BootUnlock" visible="false">
         <pkg-ref id="au.com.openwall.BootUnlock"/>
     </choice>
-    <pkg-ref id="au.com.openwall.BootUnlock">BootUnlock-1.0-dist.pkg</pkg-ref>
+    <pkg-ref id="au.com.openwall.BootUnlock">BootUnlock-1.1.0-dist.pkg</pkg-ref>
 </installer-gui-script>
