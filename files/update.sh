@@ -48,10 +48,16 @@ for V in "${VOLUME[@]}" ; do
 	VOLUME_LIST="$VOLUME_LIST${VOLUME_LIST:+, }\"$DEVICE > $NAME\""
 done
 
-RESPONSE=$(osascript -e "
-	set volumeList to { $VOLUME_LIST }
-	set unlockList to choose from list volumeList with title \"BootUnlock\" with prompt \"
-Please select volume(s) you want to be automatically unlocked during the boot (you can select multiple volumes by holding the Option key)\" multiple selections allowed true empty selection allowed true
+RESPONSE=$(osascript -l JavaScript -e "
+	var app = Application.currentApplication()
+	app.includeStandardAdditions = true
+	volumeList = [ $VOLUME_LIST ]
+	app.chooseFromList(volumeList,
+	{
+		withPrompt: 'Please select volume(s) you want to be automatically unlocked during the boot (you can select multiple volumes by holding the Command key)',
+		multipleSelectionsAllowed: true,
+		emptySelectionAllowed: true
+	})
 ")
 
 if [ -z "$RESPONSE" -o "$RESPONSE" = false ]; then
@@ -75,11 +81,37 @@ for V in "${VOLUME[@]}" ; do
 	printf '%s' "$RESPONSE" | grep -E "^$DEVICE\$" &>/dev/null || continue
 
 	while : ; do # This is a wrapper in case user provides a wrong password
-		PASSPHRASE=$(osascript -e "
-			display dialog \"Please provide the passphrase for volume '$NAME':\" with title \"BootUnlock\" buttons { \"Skip\", \"Unlock\" } default button \"Unlock\" with icon file ((path to \"apps\" as text) & \"Utilities:Disk Utility.app:Contents:Resources:AppIcon.icns\") default answer \"\" hidden answer true
+		PASSPHRASE=$(osascript -l JavaScript -e "
+			var app = Application.currentApplication()
+			app.includeStandardAdditions = true
+			ObjC.import('Foundation')
+			/*
+			iconPath = Path(
+				ObjC.deepUnwrap(
+					$.NSBundle.bundleWithIdentifier(
+						Application('Disk Utility').id()
+					).pathsForResourcesOfTypeInDirectory('icns', $()))[0])
+			*/
+			function promptPassword(text, defaultAnswer) {
+			  var options = {
+			  	defaultAnswer: defaultAnswer || '',
+				withTitle: 'BootUnlock',
+				buttons: [ 'Skip', 'Unlock' ],
+				defaultButton: 'Unlock',
+				// withIcon: iconPath,
+				hiddenAnswer: true
+			  }
+			  try {
+			    let result = app.displayDialog(text, options)
+				if (result.buttonReturned == 'Unlock')
+					return result.textReturned
+				return ''
+			  } catch (e) {
+			    return null
+			  }
+			}
+			promptPassword('Please provide the passphrase for volume \"$NAME\":')
 		")
-
-		PASSPHRASE=$(printf '%s' "$PASSPHRASE" | cut -f3- -d:)
 
 		if printf '%s' "$PASSPHRASE" | diskutil apfs unlock "$DEVICE" -stdinpassphrase -verify -user "$UUID"; then
 			printf 'Adding password for volume "%s" with UUID %s to the System keychain...\n' "$NAME" "$UUID"
