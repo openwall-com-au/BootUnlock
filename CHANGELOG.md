@@ -1,3 +1,9 @@
+1.2.0
+-----
+- Replaced some calls to "osascript" where AppleScript was hitting new security
+  measures introduced in Catalina with JXA (Javascript for Apps).  This should
+  enable the package to work on Catalina.
+
 1.1.0
 -----
 - Switched to (Semantic Versioning)[https://semver.org/] for the package
