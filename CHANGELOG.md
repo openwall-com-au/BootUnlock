@@ -1,3 +1,11 @@
+1.2.1
+-----
+
+- Improved debugging output;
+- Replaced "grep" and "cut" with "sed" to avoid "grep" triggering an early exit;
+- Removed "RunAtLoad" in the service definition, so the helper script is
+  triggered only on "mount" events;
+
 1.2.0
 -----
 - Replaced some calls to "osascript" where AppleScript was hitting new security

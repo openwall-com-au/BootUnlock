@@ -36,8 +36,6 @@ cat <<-__EOF__ > "$TMPFILE"
         <true/>
         <key>Program</key>
         <string>$INSTALL_LOCATION/helper.sh</string>
-        <key>RunAtLoad</key>
-        <true/>
         <key>StandardOutPath</key>
         <string>/var/log/$NAME.log</string>
         <key>StandardErrorPath</key>

@@ -4,11 +4,32 @@ set -eu -o pipefail
 
 PATH=/sbin:/bin:/usr/sbin:/usr/bin
 
+report() {
+	RC=$?
+	echo "RC($1) = $RC (call stack: ${BASH_LINENO[@]})"
+	echo "Mount points at this moment:"
+	mount
+	trap - EXIT; exit $RC
+}
+
+for signal in EXIT ERR HUP INT QUIT ILL TRAP ABRT EMT FPE KILL BUS SEGV SYS PIPE ALRM TERM URG STOP TSTP CONT CHLD TTIN TTOU IO XCPU XFSZ VTALRM PROF WINCH INFO USR1 USR2
+do
+	trap "report $signal" $signal
+done
+
 echo "=== $(date) ==="
-diskutil apfs list -plist \
+uptime
+
+if ! OUTPUT=$(diskutil apfs list -plist); then
+	RC=$?
+	echo "ERROR: diskutil failed with code $RC and produced the following output:"
+	printf '>>>\n%s\n<<<\n' "$OUTPUT"
+	trap - EXIT; exit 1
+fi
+
+printf '%s' "$OUTPUT" \
 	| xsltproc --novalid "${0%/*}/diskutil.xsl" - \
-	| grep -E ':true:true$' \
-	| cut -f1-3 -d':' \
+	| sed -n '/:true:true$/{ s/:true:true$//;p; }' \
 	| while IFS=: read NAME UUID DEVICE ; do
 		printf 'Trying to unlock volume "%s" with UUID %s ...\n' "$NAME" "$UUID"
 		if ! PASSPHRASE=$(${0%/*}/BootUnlock find-generic-password \
@@ -28,3 +49,7 @@ diskutil apfs list -plist \
 			continue
 		fi
 	done
+
+trap - EXIT
+echo "Success"
+mount
