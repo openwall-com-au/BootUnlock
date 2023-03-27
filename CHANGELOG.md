@@ -1,3 +1,13 @@
+1.3.0
+-----
+
+- Added support for ARM-based Macs (e.g. Macbook Pro M2);
+- Added the "preinstall" script with a check and a conditional installation of
+  the Xcode command-line tools;
+- changed the way BootUnlock binary is created from /usr/sbin/security, now
+  the lipo tool is used to extract the x86_64 part from the universal Mach-O
+  binary.  This allows running it with a adhoc signature on the ARM-based Macs.
+
 1.2.1
 -----
 
