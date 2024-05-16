@@ -113,6 +113,15 @@ for V in "${VOLUME[@]}" ; do
 			promptPassword('Please provide the passphrase for volume \"$NAME\":')
 		")
 
+		if [ -z "PASSPHRASE" ]; then
+			osascript -e "display alert \"BootUnlock\" message \"
+You did not specfy the passphrase for the selected volume(s), so BootUnlock is not going to do anything at the system boot up time.
+
+If you reconsider and will want to enable unlocking of a particular volume you can re-run the '$SELF' script at a later time
+		\" as critical" &>/dev/null
+			exit 0
+		fi
+
 		if printf '%s' "$PASSPHRASE" | diskutil apfs unlock "$DEVICE" -stdinpassphrase -verify -user "$UUID"; then
 			printf 'Adding password for volume "%s" with UUID %s to the System keychain...\n' "$NAME" "$UUID"
 			if sudo /usr/bin/security add-generic-password \
@@ -140,4 +149,3 @@ If you believe that you are providing the correct password, yet it is not recogn
 		fi
 	done
 done
-

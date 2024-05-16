@@ -3,5 +3,13 @@
 set -eu -o pipefail
 
 if ! xcode-select -p >/dev/null 2>&1; then
+	osascript -e "display alert \"BootUnlock\" message \"
+The required Xcode command-line tools have not been found on the system, requesting the installation.
+
+The installation process is going to wait until Xcode command-line tools are installed (may need your confirmation in another dialog).
+\" as critical" &>/dev/null
 	xcode-select --install ||:
+	until xcode-select -p >/dev/null 2>&1; do
+		sleep 1
+	done
 fi

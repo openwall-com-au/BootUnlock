@@ -1,3 +1,11 @@
+1.3.1
+-----
+
+- Fixed a bug where the installation script went into the infinite loop asking
+  the user for volume's password with no way to cancel the activity;
+- Hopefully, addressed an issue where the installation script was not waiting
+  for Xcode's installation to complete.
+
 1.3.0
 -----
 
