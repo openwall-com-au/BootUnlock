@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <installer-gui-script minSpecVersion="2">
     <title>BootUnlock</title>
-    <product id="au.com.openwall.BootUnlock" version="1.3.1" />
+    <product id="au.com.openwall.BootUnlock" version="1.3.2" />
     <background file="background.png" scaling="proportional" alignment="bottomleft"/>
     <welcome file="welcome.rtf"/>
     <readme file="readme.rtf"/>
@@ -20,5 +20,5 @@
     <choice id="au.com.openwall.BootUnlock" visible="false">
         <pkg-ref id="au.com.openwall.BootUnlock"/>
     </choice>
-    <pkg-ref id="au.com.openwall.BootUnlock">BootUnlock-1.3.1-dist.pkg</pkg-ref>
+    <pkg-ref id="au.com.openwall.BootUnlock">BootUnlock-1.3.2-dist.pkg</pkg-ref>
 </installer-gui-script>
