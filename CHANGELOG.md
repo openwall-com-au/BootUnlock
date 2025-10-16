@@ -1,3 +1,8 @@
+1.3.2
+-----
+
+- Fixed a typo introduced with the previous change to fix an infinite loop.
+
 1.3.1
 -----
 

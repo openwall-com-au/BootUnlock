@@ -113,7 +113,7 @@ for V in "${VOLUME[@]}" ; do
 			promptPassword('Please provide the passphrase for volume \"$NAME\":')
 		")
 
-		if [ -z "PASSPHRASE" ]; then
+		if [ -z "$PASSPHRASE" ]; then
 			osascript -e "display alert \"BootUnlock\" message \"
 You did not specfy the passphrase for the selected volume(s), so BootUnlock is not going to do anything at the system boot up time.
 
