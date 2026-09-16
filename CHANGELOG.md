@@ -1,3 +1,10 @@
+1.3.3
+-----
+
+- Replaced the lipo-thinned copy of /usr/bin/security with a small native
+  helper (build/BootUnlock.c) built for arm64 and x86_64, so the helper no
+  longer needs Rosetta on Apple Silicon Macs.
+
 1.3.2
 -----
 
